@@ -1,3 +1,5 @@
+const { use } = require("react");
+
 const playlistSongs = document.getElementById("playlist-songs");
 const playButton = document.getElementById("play");
 const pauseButton = document.getElementById("pause");
@@ -90,6 +92,14 @@ const playSong = (id) => {
   const song = userData?.songs.find((song) => song.id === id);
   audio.src = song.src;
   audio.title = song.title;
+  if (!userData?.currentSong || userData?.currentSong.id !== song.id) {
+    audio.currentTime = 0;
+  } else {
+    audio.currentTime = userData?.songCurrentTime;
+  }
+  userData.currentSong = song;
+  playButton.classList.add("playing");
+  audio.play();
 };
 
 const renderSongs = (array) => {
@@ -109,6 +119,12 @@ const renderSongs = (array) => {
     .join("");
   playlistSongs.innerHTML = songsHTML;
 };
+
+playButton.addEventListener("click", () => {
+  if (userData?.currentSong === null) {
+    playSong(userData?.songs[0].id);
+  }
+});
 
 const sortSongs = () => {
   userData?.songs.sort((a, b) => {
